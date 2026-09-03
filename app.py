@@ -89,7 +89,7 @@ def admin_logout():
     session.pop('is_admin', None)
     return redirect(url_for('admin_login'))
 
- @app.route('/admin')
+@app.route('/admin')
 def admin_dashboard():
     if not session.get('is_admin'):
         return redirect(url_for('admin_login'))
@@ -98,7 +98,7 @@ def admin_dashboard():
     cursor.execute('SELECT id, name, room, category, description, status, created_at FROM complaints ORDER BY id DESC')
     complaints = cursor.fetchall()
     conn.close()
-    return render_template('admin.html', complaints=complaints)   
+    return render_template('admin.html', complaints=complaints)
 
 
 @app.route('/update-status/<int:complaint_id>', methods=['POST'])
