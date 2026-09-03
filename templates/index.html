@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h4 class="mb-0">📢 Register Campus Complaint</h4>
+        </div>
+        <div class="card-body p-4">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="text-end mb-3">
+                <a href="{{ url_for('check_status') }}" class="btn btn-outline-secondary btn-sm">
+                    🔍 Track My Complaint
+                </a>
+            </div>
+
+            <form action="{{ url_for('submit_complaint') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Your Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Room / Location</label>
+                    <input type="text" name="room" class="form-control" placeholder="e.g. Lab 2, Hostel Room 104" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Category</label>
+                    <select name="category" class="form-select" required>
+                        <option value="Electricity / Fan">Electricity / Fan</option>
+                        <option value="Water Supply">Water Supply</option>
+                        <option value="Lab Equipment">Lab Equipment</option>
+                        <option value="Cleanliness">Cleanliness</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Explain the issue..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2">Submit Complaint</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

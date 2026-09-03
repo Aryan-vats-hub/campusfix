@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0">🔍 Track Complaint Status</h4>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" class="mb-4">
+                <div class="input-group">
+                    <input type="number" name="complaint_id" class="form-control" placeholder="Enter Complaint ID (e.g. 1)" required>
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+
+            {% if searched %}
+                {% if complaint %}
+                    <div class="card bg-light border p-3">
+                        <h5>Complaint #{{ complaint[0] }}</h5>
+                        <p class="mb-1"><strong>Name:</strong> {{ complaint[1] }}</p>
+                        <p class="mb-1"><strong>Location:</strong> {{ complaint[2] }}</p>
+                        <p class="mb-1"><strong>Category:</strong> {{ complaint[3] }}</p>
+                        <p class="mb-2"><strong>Issue:</strong> {{ complaint[4] }}</p>
+                        <hr>
+                        <div>
+                            <strong>Current Status:</strong>
+                            {% if complaint[5] == 'Resolved' %}
+                                <span class="badge bg-success fs-6">✅ Resolved</span>
+                            {% elif complaint[5] == 'Work Started' %}
+                                <span class="badge bg-info text-dark fs-6">⚙️ Work Started</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark fs-6">⏳ Pending</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">Is ID se koi complaint nahi mili!</div>
+                {% endif %}
+            {% endif %}
+
+            <div class="mt-3 text-center">
+                <a href="{{ url_for('home') }}" class="btn btn-link text-decoration-none">← Back to Complaint Form</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
