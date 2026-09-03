@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 12px;">
+        <h3 class="text-center mb-3 fw-bold">Admin Portal</h3>
+        <p class="text-center text-muted small mb-4">Enter secret administrative key to access the dashboard</p>
+        
+        {% if error %}
+            <div class="alert alert-danger py-2 text-center small" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}">
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">Admin Security Key</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Enter key" required>
+            </div>
+            <button type="submit" class="btn btn-dark w-100 py-2 fw-semibold">Unlock Dashboard</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

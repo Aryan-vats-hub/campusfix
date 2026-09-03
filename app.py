@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import sqlite3
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "campusfix_secret_key"
 DB_NAME = "campusfix.db"
+ADMIN_PASSWORD = "CampusHead"
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
@@ -56,7 +57,7 @@ def submit_complaint():
     conn.commit()
     conn.close()
 
-    flash(f"Complaint successfully register ho gayi! Aapka Complaint ID: #{complaint_id}", "success")
+    flash(f"Complaint successfully register ! Your Complaint ID: #{complaint_id}", "success")
     return redirect(url_for('home'))
 
 @app.route('/check-status', methods=['GET', 'POST'])
@@ -70,17 +71,36 @@ def check_status():
         cursor.execute('SELECT id, name, room, category, description, status, created_at FROM complaints WHERE id = ?', (c_id,))
         complaint = cursor.fetchone()
         conn.close()
-        searched = True
-    return render_template('status.html', complaint=complaint, searched=searched)
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    error = None
+    if request.method == 'POST':
+        entered_pass = request.form.get('password')
+        if entered_pass == ADMIN_PASSWORD:
+            session['is_admin'] = True
+            return redirect(url_for('admin_dashboard'))
+        else:
+            error = "Invalid Security Key!"
+    return render_template('login.html', error=error)
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('is_admin', None)
+    return redirect(url_for('admin_login'))
 
 @app.route('/admin')
 def admin_dashboard():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('SELECT id, name, room, category, description, status, created_at FROM complaints ORDER BY id DESC')
-    complaints = cursor.fetchall()
-    conn.close()
-    return render_template('admin.html', complaints=complaints)
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
+        conn = sqlite3.connect(DB_NAME)
+     cursor = conn.cursor()
+     cursor.execute('SELECT id, name, room, category, description, status, created_at FROM complaints ORDER BY id DESC')
+     complaints = cursor.fetchall()
+     conn.close()
+      return render_template('admin.html', complaints=complaints)     
+
 
 @app.route('/update-status/<int:complaint_id>', methods=['POST'])
 def update_status(complaint_id):
